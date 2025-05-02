@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -224,6 +225,11 @@ public class AlunoController {
         Page<Aluno> alunosByMateriaPreferida = alunoRepository.findAlunosByMateriaPreferida(materia, pageRequest);
 
         return ResponseEntity.ok(alunosByMateriaPreferida);
+    }
+
+    @RabbitListener(queues = "minha.nova.fila")
+    public void onAlunoMessage(Aluno aluno) {
+        log.info("Aluno recebido via fila: {}", aluno);
     }
 
 }
